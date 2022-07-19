@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
     required = f.read().splitlines()
     
 setup(
-    name='mixkup_antispoofing',
+    name='mixkupantispoofing',
     packages=find_packages(),
     url='https://github.com/MixKup/Silent-Face-Anti-Spoofing.git',
     description='This is a description for antispoof',
