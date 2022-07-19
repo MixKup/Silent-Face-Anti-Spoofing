@@ -16,6 +16,8 @@ import torch.nn.functional as F
 from src.model_lib.MiniFASNet import MiniFASNetV1, MiniFASNetV2,MiniFASNetV1SE,MiniFASNetV2SE
 from src.data_io import transform as trans
 from src.utility import get_kernel, parse_model_name
+#import albumentation as A
+
 
 MODEL_MAPPING = {
     'MiniFASNetV1': MiniFASNetV1,
@@ -51,10 +53,11 @@ class Detection:
 
 
 class AntiSpoofPredict(Detection):
-    def __init__(self, device_id):
+    def __init__(self, device_id, model_path):
         super(AntiSpoofPredict, self).__init__()
         self.device = torch.device("cuda:{}".format(device_id)
                                    if torch.cuda.is_available() else "cpu")
+        self._load_model(model_path)
 
     def _load_model(self, model_path):
         # define model
@@ -78,13 +81,14 @@ class AntiSpoofPredict(Detection):
             self.model.load_state_dict(state_dict)
         return None
 
-    def predict(self, img, model_path):
+    def predict(self, img):
         test_transform = trans.Compose([
             trans.ToTensor(),
         ])
         img = test_transform(img)
+        #print(img)
         img = img.unsqueeze(0).to(self.device)
-        self._load_model(model_path)
+        #self._load_model(model_path)
         self.model.eval()
         with torch.no_grad():
             result = self.model.forward(img)
